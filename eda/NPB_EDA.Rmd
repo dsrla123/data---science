@@ -1,0 +1,66 @@
+---
+title: "Untitled"
+author: "김호성"
+date: '2020 10 28 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## EDA
+
+```{r}
+dat=read.csv('NPB.final.csv',row.names = 1)
+attach(dat)
+
+summary(dat) #각종 기술 통계
+
+
+```
+최소값들이 특이할 정도로 작은 값이 많이 나오고 있다. 전체적인 경기수가 적었던 초창기 시즌들 때문인 것으로 보인다.
+
+계획 과정에서 역사가 깊은 야구데이터 중 과거데이터와 현재 데이터가 얼마나 차이날 것인가? 언제부터가 현대적인 의미의 야구로 유의미한 자료인가? 하는 문제들을 찾아보기 위해 년단위로 plot을 그려보겠다.흔히 말하는 야구의 패러다임 변화를 볼 때 주로 찾는경기당 득점이나 홈런 수의 변화 양상을 보겠다. 
+```{r}
+season=c(1936,1937,1937.5,1938,1938.5,seq(1939,1944),seq(1946,2020))
+league_total_hr_per_g=c()
+league_total_R_per_g=c()
+for (i in season){league_total_hr=sum(subset(dat,select = HR_h1,subset = Yr==i))
+league_total_g=sum(subset(dat,select = G,subset = Yr==i))             
+league_total_hr_per_g=append(league_total_hr_per_g,(league_total_hr/league_total_g))
+}
+for (i in season){league_total_R=sum(subset(dat,select = R_h1,subset = Yr==i))
+league_total_g=sum(subset(dat,select = G,subset = Yr==i))             
+league_total_R_per_g=append(league_total_R_per_g,(league_total_R/league_total_g))
+}
+league_total_hr_per_g
+league_total_R_per_g
+```
+
+```{r}
+plot(season,league_total_hr_per_g)
+plot(season,league_total_R_per_g)
+```
+
+전체적인 경향을 보면 경기당 홈런과 득점 모두 1950년대까지는 점진적으로 증가하는 경향을 보인다. 그후 60년대까지 뚜렷한 감소가 있다. 이 사이 50년 대의 경우 자료들의 편차가 크다. 일본 양대 리그 출범이 1950년이라는 등 현대 일본야구 전반의 배경지식을 기반으로 봤을 때, 지금 구한 데이터의 유의미한 부분(동일집단)은 50년 이후로 잡는 것이 바람직할 것으로 보인다.
+
+추가적으로 홈런과 득점은 개형만 보면 상당히 비슷하게 따라가는 듯 보이나 득점의 편차가 훤씬 커서 정확하지 않다.
+
+```{r}
+dat2=subset(dat,subset = Yr>=1950)
+summary(dat2)
+```
+누적기록만 있어 
+
+```{r}
+library(corrplot)
+mat=dat[,c(seq(3,21),seq(26,29),seq(32,35))]
+mat=na.omit(mat)
+mat_cor=cor(mat)
+corrplot(mat_cor,method='circle')
+plot(dat[('Yr'>=1950)]$R_h1/dat[('Yr'>=1950)]$G,dat[('Yr'>=1950)]$W/dat[('Yr'>=1950)]$G)
+
+```
+각 변수간의 상관관계 크기 상대적 비교이다. 누적 스탯과 비율 스탯의 차이로 인해 승수, 득점 등의 기록과는 누적스탯이 더 큰 관계로 나온다.  
+1950년 이후 각 팀의 경기당 득점과 승률의 상관성을 볼 수 있다. 흔히 war의 근거로 사용하는 피타고리안 승률 이론의 근거이다.
