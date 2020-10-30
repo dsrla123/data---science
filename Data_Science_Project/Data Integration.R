@@ -82,8 +82,10 @@ for(i in 1:nrow(br_final)) {
 
 ## NA Column Creation
 br_final$D <- 0
-br_final$BBHBP_h1 <- br_final$BB_h1 + ifelse(is.na(br_final$HBP_h1)==T, 0, br_final$HBP_h1)
-br_final$BBHBP_p1 <- br_final$BB_p1 + ifelse(is.na(br_final$HBP_p1)==T, 0, br_final$HBP_p1)
+for(i in 1:nrow(br_final)) {
+  br_final$BBHBP_h1[i] <- br_final$BB_h1[i] + ifelse(is.na(br_final$HBP_h1[i])==T, 0, br_final$HBP_h1[i])
+  br_final$BBHBP_p1[i] <- br_final$BB_p1[i] + ifelse(is.na(br_final$HBP_p1[i])==T, 0, br_final$HBP_p1[i])
+}
 br_final$wOBA_h1 <- NA
 br_final$WPA_h1 <- NA
 br_final$BABIP_h1 <- NA
@@ -97,12 +99,12 @@ br_final$AVG_p1 <- NA
 br_final$OBP_p1 <- NA
 br_final$SLG_p1 <- NA
 br_final$bFIPplus_p1 <- NA
-
+colnames(br_final)
 
 ## Baseball-Reference Final Data
 MLB_final <- br_final[, c(3, 9, 2, 1, 4, 5, 6, 73, 
-                          11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 74, 24, 25, 26, 75, 76, 77, 78, 
-                          50, 52, 53, 51, 80, 81, 54, 82, 57, 42, 63, 83, 84, 85, 86, 87, 
+                          11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 74, 24, 25, 26, 76, 77, 78, 79, 
+                          50, 52, 53, 51, 80, 81, 54, 75, 57, 42, 63, 83, 84, 85, 86, 87, 
                           79, 72, 88, 71)]
 colnames(MLB_final) <- c("League", "Team", "Team_abb", "Yr", "G", "W", "L", "D", "G_h1", "PA_h1", "AB_h1", "R_h1", "H_h1", "X2B_h1", "X3B_h1", "HR_h1", 
                          "SB_h1", "CS_h1", "BBHBP_h1", "AVG_h1", "OBP_h1", "SLG_h1", "wOBA_h1", "WPA_h1", "BABIP_h1", "wRC_h1", 
