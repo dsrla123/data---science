@@ -1,0 +1,111 @@
+---
+title: "NPB EDA"
+author: "김호성"
+date: '2020 10 28 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r read npb_bref} 
+off=read.csv('team_off.csv')
+def=read.csv('team_def.csv')
+info=read.csv('team_info.csv')
+
+team=merge(off,def,c('Yr','Team'),all=T)
+team2=merge(info,team,c('Yr','Team'),all=T)
+write.csv(team2,'npb_bref.csv')
+```
+
+```{r Npb bref column} 
+dat=read.csv('NPB.csv')
+dat[,'BBHBP_h1']=dat[,'BB.x']+dat[,'HBP.x']
+dat[,'BBHBP_p1']=dat[,'BB_p1']+dat[,'HBP_p1']
+dat[,c("wOBA_h1",'WPA_h1','BABIP_h1','wRC_h1','X2B_p1','X3B_p1','FIP_p1','WPA_p1','BABIP_p1','AVG_p1',	'OBP_p1',	'SLG_p1'	
+)]=NA
+dat[,'G']=dat[,'W']+dat[,'L']+dat[,'D']
+dat[,'G_h1']=dat[,'W']+dat[,'L']+dat[,'D']
+dat2=dat[,c(	'League',	'Team',	'Yr',	'G',	'W','L','D','G_h1','PA_h1'	,'AB_h1',	'R_h1',	'H_h1',	'X2B_h1',	'X3B_h1',	'HR_h1',	'SB_h1',	'CS_h1',	'BBHBP_h1',	'AVG_h1',	'OBP_h1',	'SLG_h1',	'wOBA_h1',	'WPA_h1',	'BABIP_h1',	'wRC_h1',	'IP_p1',	'R_p1',	'ER_p1',	'H_p1',	'X2B_p1',	'X3B_p1',	'HR_p1',	'BBHBP_p1',	'SO_p1',	'ERA_p1',	'FIP_p1',	'WPA_p1',	'BABIP_p1',	'AVG_p1',	'OBP_p1',	'SLG_p1'	)]
+write.csv(dat2,'NPB.bref.csv',row.names = F)
+
+```
+
+```{r 1.02hitter}
+std=read.csv('1.02standard.csv')
+adv=read.csv('1.02advanced.csv')
+info=read.csv('team_info.csv')
+
+dat1=merge(std,adv,c('Yr','Team','Pa'),all=T)
+dat1[,'BBHBP_h1']=dat1[,'BB.x']+dat1[,'HBP.x']
+dat[,'BBHBP_p1']=dat[,'BB_p1']+dat[,'HBP_p1']
+
+write.csv(dat1,'1.02NPB.csv',row.names = F)
+```
+
+
+```{r 1.02pitcher}
+std=read.csv('1.02pstandard.csv')
+adv=read.csv('1.02padvanced.csv')
+info=read.csv('team_info.csv')
+
+data1=merge(std,adv,c('Yr','Team'),all=T)
+
+
+write.csv(data1,'1.02NPB_p.csv',row.names = F)
+```
+
+```{r 1.02 combine}
+p=read.csv('1.02NPB_p.csv')
+h=read.csv('1.02NPB.csv')
+s102=merge(h,p,c('Yr','Team'),all = T)
+##write.csv(s102,'NPB1.02.csv',row.names = F)
+s102=read.csv('NPB1.02.csv')
+s102[,'BBHBP_h2']=s102[,'Bb.x']+s102[,'HBP.x']
+s102[,'BBHBP_p2']=s102[,'Bb.y']+s102[,'HBP.y']
+names(s102) [names(s102) == c('G.x')] <- c('G')
+names(s102) [names(s102) == c('Pa')] <- c('PA_h2')
+names(s102) [names(s102) == c('Ab')] <- c('AB_h2')
+names(s102) [names(s102) == c('H.x')] <- c('H_h2')
+names(s102) [names(s102) == c('X1B')] <- c('X1b_h2')
+names(s102) [names(s102) == c('X2B')] <- c('X2B_h2')
+names(s102) [names(s102) == c('X3B')] <- c('X3B_h2')
+names(s102) [names(s102) == c('HR.x')] <- c('HR_h2')
+names(s102) [names(s102) == c('R.x')] <- c('R_h2')
+names(s102) [names(s102) == c('Sb.x')] <- c('SB_h2')
+names(s102) [names(s102) == c('Cs.x')] <- c('CS_h2')
+names(s102) [names(s102) == c('Avg.x')] <- c('AVG_h2')
+names(s102) [names(s102) == c('Obp')] <- c('OBP_h2')
+names(s102) [names(s102) == c('Slg')] <- c('SLG_h2')
+names(s102) [names(s102) == c('BABIP')] <- c('BABIP_h2')
+names(s102) [names(s102) == c('Wrc')] <- c('wRC_h2')
+names(s102) [names(s102) == c('Ab')] <- c('AB_h1')
+names(s102) [names(s102) == c('ERA')] <- c('ERA_p2')
+names(s102) [names(s102) == c('Ip')] <- c('IP_p2')
+names(s102) [names(s102) == c('H.y')] <- c('H_p2')
+names(s102) [names(s102) == c('R.y')] <- c('R_p2')
+names(s102) [names(s102) == c('Er')] <- c('ER_p2')
+names(s102) [names(s102) == c('HR.y')] <- c('HR_p2')
+names(s102) [names(s102) == c('So.y')] <- c('SO_p2')
+names(s102) [names(s102) == c('Fip')] <- c('FIP_p2')
+s102[,c('G_h2')]=s102['G']
+s102[,c('wOBA_h2','WPA_h2','X2B_p2','X3B_p2','WPA_p2','BABIP_p2','AVG_p2',	'OBP_p2',	'SLG_p2'	)]=NA
+s102[,'League']='NPB'
+
+
+s102=s102[,c(	'League',	'Team',	'Yr',	'G','G_h2','PA_h2','AB_h2',	'R_h2',	'H_h2',	'X2B_h2',	'X3B_h2',	'HR_h2',	'SB_h2',	'CS_h2',	'BBHBP_h2',	'AVG_h2',	'OBP_h2',	'SLG_h2',	'wOBA_h2',	'WPA_h2',	'BABIP_h2',	'wRC_h2',	'IP_p2',	'R_p2',	'ER_p2',	'H_p2',	'X2B_p2',	'X3B_p2',	'HR_p2',	'BBHBP_p2',	'SO_p2',	'ERA_p2',	'FIP_p2',	'WPA_p2',	'BABIP_p2',	'AVG_p2',	'OBP_p2',	'SLG_p2'
+
+)]
+write.csv(s102,'NPB1.02final.csv',row.names = F)
+```
+
+```{r}
+npb=read.csv('NPB.final.csv')
+npb102=read.csv('NPB1.02final.csv')
+npb_final=merge(npb,npb102,c(	'League',	'Team',	'Yr','G'	),all=T)
+write.csv(npb_final,'NPB_FINAL.csv',row.names = F)
+```
+
